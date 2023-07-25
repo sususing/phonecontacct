@@ -1,186 +1,105 @@
-#include<iostream>
-#include<fstream>
-#include<conio.h>
-#include<stdio.h>
-using namespace std;
-int  menu();        
-int AddNum();    
-int  Show_Records();    
-int  SearchWithSerialNumber();   
-int  Record_Deletion();    
-int  Update_Record();    
-class PhoneBook 
-{
-    int srno;
-    char n[28];
-    char m[17];
-    char e[40];
-    char g[30];
-    public:
-    int getSrNo() {return srno;}
-    int  storeData()
-    {
-        cout<<"\n.......CREATE NEW PHONE RECORD.........\n";
-        cout<<"Enter Serial Number : "; 
-		cin>>srno; cin.ignore();
-        cout<<"Enter Record Name   : ";
-		 cin>>getline(n,28);
-        cout<<"Enter Mobile Number : "; 
-		cin>>getline(m,17);
-        cout<<"Enter E-Mail I. D.  : "; 
-		cin>>getline(e,40);
-        cout<<"Enter Record Group  : "; 
-		cin>>getline(g,30);
-        cout<<endl;
+
+#include <iostream>
+#include <string>
+struct Node {
+    Node* links[26] = { NULL };
+    bool flag = false;
+    std::string str = "";
+    bool containsKey(char ch) {
+        return links[ch - 'a'] != NULL;
     }
-    int  showData()
-    {
-        cout<<"\n...............PHONE BOOK RECORD...............\n";
-        cout<<"Sr. No.    : "<<srno<<endl;
-        cout<<"Name       : "<<n<<endl;
-        cout<<"Mobile No. : "<<m<<endl;
-        cout<<"Email ID   : "<<e<<endl;
-        cout<<"Group      : "<<g<<endl;
+    void put(char ch, Node* node) {
+        links[ch - 'a'] = node;
     }
-}x;
-int  NumberSum()
-{
-    ofstream fout;
-    fout.open("PhonBook.dat",ios::out|ios::binary|ios::app);
-    x.storeData();
-    fout.write((char*)&x,sizeof(x));
-    fout.close();
-    cout<<"\nRecord Saved to File......\n";
-}
-int  Show_Records()
-{
-    ifstream fin;
-    fin.open("PhonBook.dat",ios::out|ios::binary|ios::app);
-    while(fin.read((char*)&x,sizeof(x)))
-    {
-        x.showData();
+    Node* get(char ch) {
+        return links[ch - 'a'];
     }
-    fin.close();
-    cout<<"\nReading of Data File Completed......\n";
-}
-int SearchWithSerialNumber()
-{
-    ifstream fin;
-    int n, flag=0;
-    fin.open("PhonBook.dat",ios::out|ios::binary|ios::app);
-    cout<<"Enter Serial Number of Record To Display: ";
-    cin>>n;
-    while(fin.read((char*)&x,sizeof(x)))
-    {
-        if(n==x.getSrNo())
-        {
-            x.showData();
-            flag++;
-            cout<<"\n\n.....Record Found and Displayed......\n";
+    void setEnd(std::string& s) {
+        flag = true;
+        str = s;
+    }
+    bool isEnd() {
+        return flag;
+    }
+};
+class Trie {
+private:
+    Node* root;
+public:
+    Trie() {
+        root = new Node;
+    }
+    void insert(std::string word, std::string contact) {
+        Node* node = root;
+        for (int i = 0; i < word.size(); i++) {
+            if (!node->containsKey(word[i])) {
+                node->put(word[i], new Node);
+            }
+            node = node->get(word[i]);
+        }
+        node->setEnd(contact);
+    }
+    Node* startsWith(std::string prefix) {
+        Node* node = root;
+        for (int i = 0; i < prefix.size(); i++) {
+            if (!node->containsKey(prefix[i]))
+                return NULL;
+            node = node->get(prefix[i]);
+        }
+        return node;
+    }
+    void displayContact(Node* node, std::string& s, std::ostream& out) {
+        if (node->isEnd()) {
+            out << s << " " << node->str << std::endl;
+        }
+        for (int i = 0; i < 26; i++) {
+            if (node->links[i] != NULL) {
+                char cha = 'a' + i;
+                std::string st = s + cha;
+                displayContact(node->links[i], st, out);
+            }
         }
     }
-    fin.close();
-    if(flag==0)
-        cout<<"\nThe Record of Serial Number "<<n<<" is not in file....\n";
-    cout<<"\nReading of Data File Completed......\n";
-}
-int  Record_Deletion()
-{
-    ifstream fin;
-    ofstream fout;
-    int n, flag=0;
-    fin.open("PhonBook.dat",ios::out|ios::binary|ios::app);
-    fout.open("temp.dat",ios::out|ios::binary);
-    cout<<"Enter Serial Number of Record To Delete : ";
-    cin>>n;
-    while(fin.read((char*)&x,sizeof(x)))
-    {
-        if(n==x.getSrNo())
-        {
-            cout<<"\nThe Following record is deleted....\n";
-            x.showData();
-            flag++;
-        }
+    void display(std::string s) {
+        Node* node = startsWith(s);
+        if (node == NULL)
+            std::cout << "No contact" << std::endl;
         else
-        {
-            fout.write((char*)&x,sizeof(x));
-        }
+            displayContact(node, s, std::cout);
     }
-    fin.close();
-    fout.close();
-    if(flag==0)
-    {
-        cout<<"\nThe Record of Serial Number "<<n<<" is not in file....\n";
-    cout<<"\nReading of Data File Completed......\n";
-    remove("PhonBook.dat");
-    rename("temp.dat","PhonBook.dat");
-}
-int  Update_Record()
-{
-    fstream fio;
-    int n, flag=0,pos;
-    fio.open("PhonBook.dat",ios::out|ios::binary|ios::in);
- 
-    cout<<"Enter Serial Number of Record To Modify : ";
-    cin>>n;
-    while(fio.read((char*)&x,sizeof(x)))
-    {
-        pos=fio.tellg();
-        if(n==x.getSrNo())
-        {
-            cout<<"\nThe Following record will be modified....\n";
-            x.showData();
-            flag++;
-            cout<<"\nRe-Enter the New Details.....\n";
-            x.storeData();
-            fio.seekg(pos-sizeof(x));
-            fio.write((char*)&x,sizeof(x));
-            cout<<"\n....Data Modified Successfully....\n";
-        }
+    ~Trie() {
+        deleteTrie(root);
     }
-    fio.close();
-    if(flag==0)
-        cout<<"\nThe Record of Serial Number "<<n<<" is not in file....\n";
-    cout<<"\nReading of Data File Completed......\n";
-}
- 
-void menu()
-{
-    int ch;
-    do
-    {
-        //clrscr();
-        cout<<"............................................\n";
-        cout<<"           PHONE BOOK MANAGEMENT\n";
-        cout<<"............................................\n\n";
-        cout<<"::::::::::::::: PROGRAM MENU :::::::::::::::\n";
-        cout<<"0. Exit\n";
-        cout<<"1. Save New Phone Record\n";
-        cout<<"2. Display All Saved Records\n";
-        cout<<"3. Search Specific Record\n";
-        cout<<"4. Delete Specific Record\n";
-        cout<<"5. Modify Existing Record\n";
-        cout<<"Enter Your Choice  ";
-        cin>>ch;
-        //clrscr();
-        switch(ch)
-        {
-            case 1: NumberSum(); break;
-            case 2: Show_Records(); 
-			break;
-            case 3: SearchWithSerialNumber();
-			 break;
-            case 4: Record_Deletion();
-			 break;
-            case 5: Update_Record(); 
-			break;
+private:
+    void deleteTrie(Node* node) {
+        if (node == NULL)
+            return;
+        for (int i = 0; i < 26; i++) {
+            deleteTrie(node->links[i]);
         }
-        getch();
+        delete node;
     }
-	while(ch);
-}
-int main()
-{
-    menu();
+};
+int main() {
+    Trie* t = new Trie();
+    int n;
+    std::cout << "Number of contacts that you want in your phone list: ";
+    std::cin >> n;
+    std::cout << "Enter names and phones of your phone list:" << std::endl;
+    for (int i = 0; i < n; i++) {
+        std::string name, phone;
+        std::cin >> name >> phone;
+        t->insert(name, phone);
+    }
+    std::cout << "Enter the number of queries: ";
+    int query;
+    std::cin >> query;
+    for (int i = 0; i < query; i++) {
+        std::string q;
+        std::cout << "Searched list: ";
+        std::cin >> q;
+        t->display(q);
+    }
+    delete t; // Clean up dynamically allocated memory
     return 0;
 }
