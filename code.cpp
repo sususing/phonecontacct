@@ -3,12 +3,12 @@
 
 struct Node {
     // ... (same as the previous implementation)
-     Node* links[26] = { NULL };
+    Node* links[26] = { nullptr };
     bool flag = false;
     std::string str = "";
 
     bool containsKey(char ch) {
-        return links[ch - 'a'] != NULL;
+        return links[ch - 'a'] != nullptr;
     }
 
     void put(char ch, Node* node) {
@@ -27,17 +27,15 @@ struct Node {
     bool isEnd() {
         return flag;
     }
-    
 };
 
 class Trie {
-    private:
+private:
     Node* root;
 
 public:
     Trie() {
-    // ... (same as the previous implementation)
-         root = new Node;
+        root = new Node;
     }
 
     void insert(std::string word, std::string contact) {
@@ -55,7 +53,7 @@ public:
         Node* node = root;
         for (int i = 0; i < prefix.size(); i++) {
             if (!node->containsKey(prefix[i]))
-                return NULL;
+                return nullptr;
             node = node->get(prefix[i]);
         }
         return node;
@@ -66,7 +64,7 @@ public:
             out << s << " " << node->str << std::endl;
         }
         for (int i = 0; i < 26; i++) {
-            if (node->links[i] != NULL) {
+            if (node->links[i] != nullptr) {
                 char cha = 'a' + i;
                 std::string st = s + cha;
                 displayContact(node->links[i], st, out);
@@ -76,7 +74,7 @@ public:
 
     void display(std::string s) {
         Node* node = startsWith(s);
-        if (node == NULL)
+        if (node == nullptr)
             std::cout << "No contact" << std::endl;
         else
             displayContact(node, s, std::cout);
@@ -92,7 +90,7 @@ public:
 
 private:
     void deleteTrie(Node* node) {
-        if (node == NULL)
+        if (node == nullptr)
             return;
         for (int i = 0; i < 26; i++) {
             deleteTrie(node->links[i]);
@@ -141,8 +139,8 @@ int main() {
         std::cout << "1. Insert Contact\n";
         std::cout << "2. Search Contact\n";
         std::cout << "3. Delete Contact\n";
-         std::cout << "4. Show Names Starting with\n"; // New option to show names                                  starting with a given string
-        std::cout << "5. Exit\n"; // Update the option count
+        std::cout << "4. Show Names Starting with\n";
+        std::cout << "5. Exit\n";
         std::cout << "Enter the option number: ";
         std::cin >> option;
 
@@ -182,7 +180,8 @@ int main() {
                 }
                 break;
             }
-             case 4: {
+
+            case 4: {
                 // Case 4: Show Names Starting with
                 std::cout << "\nCase 4: Show Names Starting with\n";
                 std::cout << "Enter the prefix to search: ";
@@ -193,11 +192,10 @@ int main() {
             }
 
             case 5: {
-                // Case 4: Exit
+                // Case 5: Exit
                 std::cout << "Exiting program...\n";
                 break;
             }
-        
 
             default:
                 std::cout << "Invalid option. Please try again.\n";
