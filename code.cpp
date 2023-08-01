@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-
+using namespace std;
 struct Node {
     // ... (same as the previous implementation)
     Node* links[26] = { nullptr };
     bool flag = false;
-    std::string str = "";
+    string str = "";
 
     bool containsKey(char ch) {
         return links[ch - 'a'] != nullptr;
@@ -19,7 +19,7 @@ struct Node {
         return links[ch - 'a'];
     }
 
-    void setEnd(std::string& s) {
+    void setEnd(string& s) {
         flag = true;
         str = s;
     }
@@ -38,7 +38,7 @@ public:
         root = new Node;
     }
 
-    void insert(std::string word, std::string contact) {
+    void insert(string word,string contact) {
         Node* node = root;
         for (int i = 0; i < word.size(); i++) {
             if (!node->containsKey(word[i])) {
@@ -49,7 +49,7 @@ public:
         node->setEnd(contact);
     }
 
-    Node* startsWith(std::string prefix) {
+    Node* startsWith(string prefix) {
         Node* node = root;
         for (int i = 0; i < prefix.size(); i++) {
             if (!node->containsKey(prefix[i]))
@@ -59,28 +59,28 @@ public:
         return node;
     }
 
-    void displayContact(Node* node, std::string& s, std::ostream& out) {
+    void displayContact(Node* node, string& s, ostream& out) {
         if (node->isEnd()) {
             out << s << " " << node->str << std::endl;
         }
         for (int i = 0; i < 26; i++) {
             if (node->links[i] != nullptr) {
                 char cha = 'a' + i;
-                std::string st = s + cha;
+                string st = s + cha;
                 displayContact(node->links[i], st, out);
             }
         }
     }
 
-    void display(std::string s) {
+    void display(string s) {
         Node* node = startsWith(s);
         if (node == nullptr)
-            std::cout << "No contact" << std::endl;
+            cout << "No contact" << endl;
         else
-            displayContact(node, s, std::cout);
+            displayContact(node, s, cout);
     }
 
-    bool remove(std::string word) {
+    bool remove(string word) {
         return removeContact(root, word, 0);
     }
 
@@ -98,7 +98,7 @@ private:
         delete node;
     }
 
-    bool removeContact(Node* node, const std::string& word, int depth) {
+    bool removeContact(Node* node, const string& word, int depth) {
         if (!node)
             return false;
 
@@ -135,34 +135,34 @@ int main() {
 
     int option;
     do {
-        std::cout << "\nOptions:\n";
-        std::cout << "1. Insert Contact\n";
-        std::cout << "2. Search Contact\n";
-        std::cout << "3. Delete Contact\n";
-        std::cout << "4. Show Names Starting with\n";
-        std::cout << "5. Exit\n";
-        std::cout << "Enter the option number: ";
-        std::cin >> option;
+        cout << "\nOptions:\n";
+        cout << "1. Insert Contact\n";
+        cout << "2. Search Contact\n";
+        cout << "3. Delete Contact\n";
+        cout << "4. Show Names Starting with\n";
+        cout << "5. Exit\n";
+        cout << "Enter the option number: ";
+        cin >> option;
 
         switch (option) {
             case 1: {
                 // Case 1: Insert Contacts
-                std::cout << "\nCase 1: Insert Contact\n";
-                std::string name, phone;
-                std::cout << "Contact name: ";
-                std::cin >> name;
-                std::cout << "Contact phone number: ";
-                std::cin >> phone;
+                cout << "\nCase 1: Insert Contact\n";
+                string name, phone;
+                cout << "Contact name: ";
+                cin >> name;
+                cout << "Contact phone number: ";
+                cin >> phone;
                 t->insert(name, phone);
                 break;
             }
 
             case 2: {
                 // Case 2: Search Contacts
-                std::cout << "\nCase 2: Search Contact\n";
-                std::cout << "Enter the contact name you want to search: ";
-                std::string q;
-                std::cin >> q;
+                cout << "\nCase 2: Search Contact\n";
+                cout << "Enter the contact name you want to search: ";
+                string q;
+                cin >> q;
                 t->display(q);
                 break;
             }
@@ -183,22 +183,22 @@ int main() {
 
             case 4: {
                 // Case 4: Show Names Starting with
-                std::cout << "\nCase 4: Show Names Starting with\n";
-                std::cout << "Enter the prefix to search: ";
-                std::string prefix;
-                std::cin >> prefix;
+                cout << "\nCase 4: Show Names Starting with\n";
+                cout << "Enter the prefix to search: ";
+                string prefix;
+                cin >> prefix;
                 t->display(prefix);
                 break;
             }
 
             case 5: {
                 // Case 5: Exit
-                std::cout << "Exiting program...\n";
+                cout << "Exiting program...\n";
                 break;
             }
 
             default:
-                std::cout << "Invalid option. Please try again.\n";
+                cout << "Invalid option. Please try again.\n";
                 break;
         }
     } while (option != 5);
