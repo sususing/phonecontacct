@@ -141,7 +141,8 @@ int main() {
         std::cout << "1. Insert Contact\n";
         std::cout << "2. Search Contact\n";
         std::cout << "3. Delete Contact\n";
-        std::cout << "4. Exit\n";
+         std::cout << "4. Show Names Starting with\n"; // New option to show names                                  starting with a given string
+        std::cout << "5. Exit\n"; // Update the option count
         std::cout << "Enter the option number: ";
         std::cin >> option;
 
@@ -181,18 +182,28 @@ int main() {
                 }
                 break;
             }
+             case 4: {
+                // Case 4: Show Names Starting with
+                std::cout << "\nCase 4: Show Names Starting with\n";
+                std::cout << "Enter the prefix to search: ";
+                std::string prefix;
+                std::cin >> prefix;
+                t->display(prefix);
+                break;
+            }
 
-            case 4: {
+            case 5: {
                 // Case 4: Exit
                 std::cout << "Exiting program...\n";
                 break;
             }
+        
 
             default:
                 std::cout << "Invalid option. Please try again.\n";
                 break;
         }
-    } while (option != 4);
+    } while (option != 5);
 
     delete t; // Clean up dynamically allocated memory
     return 0;
